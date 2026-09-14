@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: var(--font-baloo);
+  --font-body: var(--font-nunito);
+}
+
+@theme {
+  /* Paleta extraída del sitio LaCardio Kids (lacardio.org/lacardiokids) */
+  --color-sky: #5fe2f9;
+  --color-cloud: #e6faff;
+  --color-mist: #cff6fd;
+  --color-navy: #0a2540;
+  --color-lacardio: #002d72;
+  --color-lacardio-deep: #001b4a;
+  --color-sun: #ffec80;
+  --color-sun-deep: #f9d403;
+  --color-coral: #e0245e;
+  --color-coral-soft: #ffe5ec;
+  --color-coral-deep: #b01a48;
+  --color-lavender: #efecf7;
+  --color-grape: #9180c6;
+  --color-leaf: #34c759;
+  --color-leaf-deep: #1f9d4d;
+  --color-steel: #ced3d8;
+  --shadow-pop: 0 6px 0 rgb(10 37 64 / 0.12);
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--color-cloud);
+}
+
+::selection {
+  background-color: var(--color-sun);
+}
