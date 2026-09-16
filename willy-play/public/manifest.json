@@ -1,0 +1,24 @@
+{
+  "name": "Willy Play | LaCardio Kids",
+  "short_name": "Willy Play",
+  "description": "Aprende y juega con Willy, el osito cuidador. Juegos sobre nutrición y salud del corazón.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#E8F4FD",
+  "theme_color": "#5FE2F9",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/willy_avatar.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/willy_avatar.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

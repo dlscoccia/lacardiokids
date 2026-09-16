@@ -93,3 +93,80 @@ export function playSfx(name: SfxName): void {
     // Los sonidos son decorativos: nunca deben romper la app.
   }
 }
+
+/* ── Background Music (ambient loop) ───────────────────────────── */
+
+let bgNodes: { osc: OscillatorNode; gain: GainNode }[] = [];
+let bgInterval: number | null = null;
+let bgPlaying = false;
+
+const MELODY_NOTES = [
+  261.63, 293.66, 329.63, 349.23, 392.0, 440.0, 493.88, 523.25,
+  493.88, 440.0, 392.0, 349.23, 329.63, 293.66,
+];
+
+function playBgNote(freq: number, duration: number) {
+  const audio = getAudioContext();
+  if (!audio) return;
+
+  const osc = audio.createOscillator();
+  const gain = audio.createGain();
+
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(freq, audio.currentTime);
+
+  gain.gain.setValueAtTime(0.0001, audio.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.04, audio.currentTime + 0.1);
+  gain.gain.setValueAtTime(0.04, audio.currentTime + duration - 0.2);
+  gain.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + duration);
+
+  osc.connect(gain);
+  gain.connect(audio.destination);
+  osc.start(audio.currentTime);
+  osc.stop(audio.currentTime + duration + 0.05);
+
+  bgNodes.push({ osc, gain });
+  setTimeout(() => {
+    bgNodes = bgNodes.filter((n) => n.osc !== osc);
+  }, (duration + 0.1) * 1000);
+}
+
+export function startBgm(): void {
+  if (bgPlaying) return;
+  if (typeof window === "undefined") return;
+  if (!useSettingsStore.getState().soundOn) return;
+
+  bgPlaying = true;
+  let noteIndex = 0;
+
+  const playNext = () => {
+    if (!bgPlaying) return;
+    const freq = MELODY_NOTES[noteIndex % MELODY_NOTES.length]!;
+    playBgNote(freq, 1.2);
+    noteIndex++;
+  };
+
+  playNext();
+  bgInterval = window.setInterval(playNext, 1400);
+}
+
+export function stopBgm(): void {
+  bgPlaying = false;
+  if (bgInterval) {
+    window.clearInterval(bgInterval);
+    bgInterval = null;
+  }
+  bgNodes.forEach((n) => {
+    try {
+      n.gain.gain.cancelScheduledValues(0);
+      n.gain.gain.setValueAtTime(n.gain.gain.value, 0);
+      n.gain.gain.exponentialRampToValueAtTime(0.0001, 0.3);
+      setTimeout(() => { try { n.osc.stop(); } catch {} }, 350);
+    } catch {}
+  });
+  bgNodes = [];
+}
+
+export function isBgmPlaying(): boolean {
+  return bgPlaying;
+}

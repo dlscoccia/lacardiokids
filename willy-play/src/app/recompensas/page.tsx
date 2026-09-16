@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Coins, Flame, Lock, Star, Trophy } from "lucide-react";
 import { TopHud } from "@/components/layout/TopHud";
 import { CandyButton } from "@/components/ui/CandyButton";
@@ -81,8 +82,18 @@ export default function RecompensasPage() {
                       : "border-navy/20 bg-white/60"
                 }`}
               >
-                <span className={`text-3xl ${unlocked ? "" : "opacity-40 grayscale"}`}>
-                  {avatar.emoji}
+                <span className={`flex h-10 w-10 items-center justify-center overflow-hidden rounded-full ${unlocked ? "" : "opacity-40 grayscale"}`}>
+                  {avatar.image ? (
+                    <Image
+                      src={avatar.image}
+                      alt={avatar.name}
+                      width={40}
+                      height={40}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-3xl">{avatar.emoji}</span>
+                  )}
                 </span>
                 <span className="font-display text-[11px] leading-none text-navy">
                   {unlocked ? avatar.name : `${avatar.threshold} pts`}

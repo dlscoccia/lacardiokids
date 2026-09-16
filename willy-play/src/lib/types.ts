@@ -24,6 +24,7 @@ export interface AvatarDef {
   id: string;
   name: string;
   emoji: string;
+  image?: string;
   threshold: number;
 }
 

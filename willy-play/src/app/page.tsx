@@ -1,11 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { GAMES } from "@/games/registry";
 import { TopHud } from "@/components/layout/TopHud";
 import { GameCard } from "@/components/ui/GameCard";
 import { SpeechBubble } from "@/components/willy/SpeechBubble";
 import { WillyGuide } from "@/components/willy/WillyGuide";
+import { OnboardingOverlay } from "@/components/onboarding/OnboardingOverlay";
+import { DailyChallengeCard } from "@/components/daily/DailyChallengeCard";
+import { HealthTips } from "@/components/health/HealthTips";
+import { NextUnlockBar } from "@/components/rewards/NextUnlockBar";
+import { useOnboardingStore } from "@/stores/onboarding-store";
 
 const WILLY_MESSAGES = [
   "¡Hola Explorador! Juguemos y aprendamos a cuidar tu corazón. ❤️",
@@ -17,6 +23,7 @@ const WILLY_MESSAGES = [
 export default function HomePage() {
   const [messageIndex, setMessageIndex] = useState(0);
   const [happy, setHappy] = useState(false);
+  const hasSeenOnboarding = useOnboardingStore((s) => s.hasSeenOnboarding);
 
   const handleWillyTap = () => {
     setMessageIndex((i) => (i + 1) % WILLY_MESSAGES.length);
@@ -25,7 +32,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-6">
+    <div className="flex flex-1 flex-col gap-5">
       <TopHud />
 
       <section aria-label="Willy te saluda" className="flex items-center gap-2">
@@ -41,6 +48,8 @@ export default function HomePage() {
         </SpeechBubble>
       </section>
 
+      <DailyChallengeCard />
+
       <section aria-label="Juegos disponibles" className="flex flex-col gap-4">
         <div>
           <h1 className="font-display text-2xl leading-tight text-navy">¡Elige tu misión!</h1>
@@ -52,6 +61,14 @@ export default function HomePage() {
           <GameCard key={game.id} game={game} index={index} />
         ))}
       </section>
+
+      <NextUnlockBar />
+
+      <HealthTips />
+
+      <AnimatePresence>
+        {!hasSeenOnboarding && <OnboardingOverlay key="onboarding" />}
+      </AnimatePresence>
     </div>
   );
 }

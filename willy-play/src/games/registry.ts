@@ -49,6 +49,16 @@ export const GAMES: GameDefinition[] = [
     rewards: { maxPoints: 60, perHit: 5, completion: 20, badgeId: "memoria-fantastica" },
     load: () => import("@/games/memory/MemoryGame"),
   },
+  {
+    id: "quiz",
+    title: "Quiz Nutricional",
+    subtitle: "Pon a prueba tu conocimiento",
+    icon: "🧠",
+    gradient: "bg-gradient-to-br from-sun to-coral",
+    status: "disponible",
+    rewards: { maxPoints: 60, perHit: 5, completion: 20, badgeId: "quiz-experto" },
+    load: () => import("@/games/quiz/QuizGame"),
+  },
 ];
 
 export function getGame(id: string): GameDefinition | undefined {

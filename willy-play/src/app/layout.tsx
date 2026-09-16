@@ -4,6 +4,7 @@ import { HydrateStores } from "@/components/HydrateStores";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { MotionProvider } from "@/components/layout/MotionProvider";
 import { SkyBackground } from "@/components/layout/SkyBackground";
+import { RegisterSW } from "@/components/RegisterSW";
 import "./globals.css";
 
 const baloo = Baloo_2({ subsets: ["latin"], variable: "--font-baloo" });
@@ -13,10 +14,20 @@ export const metadata: Metadata = {
   title: "Willy Play | LaCardio Kids",
   description:
     "Aprende y juega con Willy, el osito cuidador. Juegos sobre nutrición y salud del corazón para exploradores de 6 a 11 años.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Willy Play",
+  },
 };
 
 export const viewport: Viewport = {
   themeColor: "#5fe2f9",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -28,6 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col font-body text-navy">
         <MotionProvider>
           <HydrateStores />
+          <RegisterSW />
           <SkyBackground />
           <div className="relative z-10 mx-auto flex w-full max-w-md flex-1 flex-col px-4 pb-28 pt-5">
             {children}

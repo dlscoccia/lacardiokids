@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Clock, Hash } from "lucide-react";
 import { GameShell } from "@/components/game/GameShell";
@@ -64,6 +65,33 @@ function DifficultyOverlay({
           </motion.div>
         ))}
       </div>
+    </motion.div>
+  );
+}
+
+/* ── Overlay de finalización ───────────────────────────────────── */
+
+function CompletionOverlay({
+  message,
+  onClose,
+}: {
+  message: string;
+  onClose: () => void;
+}) {
+  return (
+    <motion.div
+      className="fixed inset-0 z-40 flex flex-col items-center justify-center gap-5 bg-cloud/95 p-6 backdrop-blur-sm"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <WillyGuide size={150} variant="happy" />
+      <SpeechBubble tail="top" className="max-w-sm">
+        <p className="text-base leading-snug">{message}</p>
+      </SpeechBubble>
+      <CandyButton variant="sun" size="lg" onClick={onClose}>
+        ¡Volver al inicio!
+      </CandyButton>
     </motion.div>
   );
 }
@@ -133,6 +161,7 @@ function MemoryCard({
 /* ── Juego principal ───────────────────────────────────────────── */
 
 export default function MemoryGame({ definition }: GameProps) {
+  const router = useRouter();
   const addPoints = usePlayerStore((s) => s.addPoints);
   const recordGameResult = usePlayerStore((s) => s.recordGameResult);
 
@@ -145,6 +174,7 @@ export default function MemoryGame({ definition }: GameProps) {
   const [factCard, setFactCard] = useState<CardPair | null>(null);
   const [pendingReward, setPendingReward] = useState<RewardPayload | null>(null);
   const [finalReward, setFinalReward] = useState<RewardPayload | null>(null);
+  const [showCompletion, setShowCompletion] = useState(false);
 
   const busyRef = useRef(false);
   const startRef = useRef<number | null>(null);
@@ -234,8 +264,9 @@ export default function MemoryGame({ definition }: GameProps) {
 
         /* ¿Todas las parejas encontradas? */
         if (newMatched.size === cards.length / 2 && difficulty) {
-          if (matchTimeoutRef.current) window.clearTimeout(matchTimeoutRef.current);
-          matchTimeoutRef.current = window.setTimeout(() => finish(newAttempts, difficulty), 800);
+          const currentDiff = difficulty;
+          const currentAttempts = newAttempts;
+          window.setTimeout(() => finish(currentAttempts, currentDiff), 800);
         }
       } else {
         /* No match: voltear de vuelta tras 1s */
@@ -269,18 +300,13 @@ export default function MemoryGame({ definition }: GameProps) {
   }, [pendingReward]);
 
   const handlePlayAgain = useCallback(() => {
-    setDifficulty(null);
-    setCards([]);
-    setFlipped([]);
-    setMatched(new Set());
-    setAttempts(0);
-    setElapsedMs(0);
-    setFactCard(null);
-    setPendingReward(null);
     setFinalReward(null);
-    finishedRef.current = false;
-    startRef.current = null;
+    setShowCompletion(true);
   }, []);
+
+  const handleCompletionClose = useCallback(() => {
+    router.push("/");
+  }, [router]);
 
   const cols = difficulty?.cols ?? 4;
 
@@ -379,6 +405,16 @@ export default function MemoryGame({ definition }: GameProps) {
             key="reward"
             reward={finalReward}
             onDone={handlePlayAgain}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showCompletion && (
+          <CompletionOverlay
+            key="completion"
+            message="¡Refrigerador Completado! Encontraste todas las parejas de Willy. ¡Eres un genio de la nutrición!"
+            onClose={handleCompletionClose}
           />
         )}
       </AnimatePresence>

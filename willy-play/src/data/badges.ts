@@ -20,8 +20,15 @@ export const BADGES: BadgeDef[] = [
     id: "memoria-fantastica",
     name: "Memoria Fantástica",
     description: "Completaste El Refrigerador de Willy",
-    emoji: "🧠",
+    emoji: "🧊",
     check: (p) => (p.completedGames["memory"] ?? 0) >= 1,
+  },
+  {
+    id: "quiz-experto",
+    name: "Quiz Experto",
+    description: "Completaste el Quiz Nutricional",
+    emoji: "🧠",
+    check: (p) => (p.completedGames["quiz"] ?? 0) >= 1,
   },
   {
     id: "racha-3",

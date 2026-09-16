@@ -37,12 +37,12 @@ export function WillyGuide({ size = 160, variant = "idle", className, onClick }:
       className={`relative select-none ${onClick ? "cursor-pointer" : ""} ${className ?? ""}`}
     >
       <Image
-        src="/willy.png"
+        src="/willy_avatar.jpeg"
         alt="Willy, el osito guía"
-        width={879}
-        height={732}
+        width={400}
+        height={400}
         priority
-        style={{ width: size, height: "auto" }}
+        style={{ width: size, height: "auto", borderRadius: "50%" }}
         draggable={false}
       />
     </motion.div>
