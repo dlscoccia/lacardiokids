@@ -75,7 +75,6 @@ export default function QuizGame({ definition }: GameProps) {
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [factQuestion, setFactQuestion] = useState<QuizQuestion | null>(null);
-  const [pendingReward, setPendingReward] = useState<RewardPayload | null>(null);
   const [finalReward, setFinalReward] = useState<RewardPayload | null>(null);
   const [elapsedMs, setElapsedMs] = useState(0);
   const [gameFinished, setGameFinished] = useState(false);
@@ -127,7 +126,7 @@ export default function QuizGame({ definition }: GameProps) {
         summary.streakChanged && summary.streak.current > 1
           ? ` 🔥 ¡Llevas ${summary.streak.current} días seguidos jugando!`
           : "";
-      setPendingReward({
+      setFinalReward({
         title: "¡Quiz Completado!",
         message: `Respondiste ${correct} de ${QUESTIONS.length} preguntas correctamente. ¡Eres un experto en nutrición! 🧠${streakLine}`,
         points: definition.rewards.completion,
@@ -185,24 +184,11 @@ export default function QuizGame({ definition }: GameProps) {
     if (currentIndex + 1 >= questions.length) {
       const newCorrect = correctCount + (isCorrect ? 1 : 0);
       const newWrong = wrongCount + (isCorrect ? 0 : 1);
-      if (pendingReward) {
-        setFinalReward(pendingReward);
-        setPendingReward(null);
-      } else {
-        finish(newCorrect, newWrong);
-      }
+      finish(newCorrect, newWrong);
     } else {
       setCurrentIndex((i) => i + 1);
     }
-  }, [currentIndex, questions, correctCount, wrongCount, isCorrect, pendingReward, finish]);
-
-  const handleFactCloseAfterFinish = useCallback(() => {
-    setFactQuestion(null);
-    if (pendingReward) {
-      setFinalReward(pendingReward);
-      setPendingReward(null);
-    }
-  }, [pendingReward]);
+  }, [currentIndex, questions, correctCount, wrongCount, isCorrect, finish]);
 
   const question = questions[currentIndex];
 
@@ -327,13 +313,9 @@ export default function QuizGame({ definition }: GameProps) {
                 <CandyButton
                   variant="sun"
                   size="lg"
-                  onClick={
-                    currentIndex + 1 >= questions.length && gameFinished
-                      ? handleFactCloseAfterFinish
-                      : handleFactClose
-                  }
+                  onClick={handleFactClose}
                 >
-                  {currentIndex + 1 >= questions.length && gameFinished
+                  {currentIndex + 1 >= questions.length
                     ? "¡Ver resultados!"
                     : "¡Siguiente!"}
                 </CandyButton>
